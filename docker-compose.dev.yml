@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  app:
+    container_name: your_app_name
+    build:
+      dockerfile: .docker/Dockerfile.dev
+      context: .
+    working_dir: /data/app
+    ports:
+      - '80:80'
+    tty: true
+    volumes:
+      - ./:/data/app
+    env_file:
+      - .env/.env.dev
+    depends_on:
+      your_app_name_db:
+        condition: service_healthy
+  
+  your_app_name_db:
+    container_name: your_app_name_db
+    image: postgres
+    ports:
+      - '5432'
+    volumes:
+      - ./postgres/init:/docker-entrypoint-initdb.d
+      - your_app_name_db_volume:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pos.pos..pos
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+    hostname: postgres
+    restart: always
+    user: postgres
+    healthcheck:
+      test: psql -U ${POSTGRES_USER:-postgres} -c SELECT your_app_name
+      interval: 2s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  your_app_name_db_volume:

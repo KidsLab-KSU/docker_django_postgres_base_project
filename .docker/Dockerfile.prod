@@ -1,0 +1,10 @@
+FROM python
+
+WORKDIR /data/app
+COPY requirements.txt /data/app/
+RUN pip install --upgrade pip && pip install -r requirements.txt
+
+COPY entrypoint.prod.sh /data/app/
+RUN chmod +x /data/app/entrypoint.prod.sh
+
+ENTRYPOINT [ "sh", "entrypoint.prod.sh"]

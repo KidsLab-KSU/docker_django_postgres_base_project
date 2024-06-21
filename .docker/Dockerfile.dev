@@ -1,0 +1,5 @@
+FROM python
+
+WORKDIR /data/app
+COPY requirements.txt /data/app/
+RUN pip install --upgrade pip && pip install -r requirements.txt
